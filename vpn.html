@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Finger VPN UI</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+    overflow:hidden;
+    font-family:Arial;
+}
+
+/* BOX */
+.fingerprint-box{
+    position:relative;
+    width:200px;
+    height:200px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    flex-direction:column;
+    gap:15px;
+}
+
+/* RING */
+.ring{
+    position:absolute;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    border:4px solid #00e5ff;
+    box-shadow:
+        0 0 15px #00e5ff,
+        0 0 40px #00e5ff,
+        0 0 80px #00e5ff;
+    animation:pulse 2s infinite;
+}
+
+/* ICON */
+.fingerprint{
+    font-size:80px;
+    z-index:2;
+    animation:scan 2s infinite;
+}
+
+/* TEXT */
+.status{
+    position:absolute;
+    bottom:-60px;
+    color:#00e5ff;
+    letter-spacing:2px;
+    font-size:14px;
+    text-shadow:0 0 10px #00e5ff;
+}
+
+/* ANIMATIONS */
+@keyframes pulse{
+    0%{transform:scale(0.9);opacity:0.5;}
+    50%{transform:scale(1.05);opacity:1;}
+    100%{transform:scale(0.9);opacity:0.5;}
+}
+
+@keyframes scan{
+    0%{transform:scale(0.95);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(0.95);}
+}
+
+/* BLOCKED MODE */
+.blocked .ring{
+    border-color:#ff2d2d;
+    box-shadow:
+        0 0 15px #ff2d2d,
+        0 0 40px #ff2d2d,
+        0 0 80px #ff2d2d;
+    animation:none;
+}
+
+.blocked .fingerprint{
+    animation:none;
+    color:#ff2d2d;
+}
+
+/* GLITCH EFFECT */
+.glitch{
+    animation:glitch 0.2s infinite;
+}
+
+@keyframes glitch{
+    0%{transform:translate(0);}
+    25%{transform:translate(-2px,2px);}
+    50%{transform:translate(2px,-2px);}
+    75%{transform:translate(-2px,-2px);}
+    100%{transform:translate(0);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="fingerprint-box" id="btn">
+    <div class="ring"></div>
+    <div class="fingerprint">🛡️</div>
+    <div class="status" id="status">VPN CONNECTÉ</div>
+</div>
+
+<!-- SONS -->
+<audio id="onSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
+<audio id="offSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+
+<script>
+
+const btn = document.getElementById("btn");
+const status = document.getElementById("status");
+const onSound = document.getElementById("onSound");
+const offSound = document.getElementById("offSound");
+
+let blocked = false;
+
+btn.addEventListener("click", () => {
+
+    blocked = !blocked;
+
+    if(blocked){
+        btn.classList.add("blocked","glitch");
+        status.innerText = "VPN DÉCONNECTÉ ❌";
+
+        offSound.play();
+
+        navigator.vibrate?.([200,100,200]);
+
+    }else{
+        btn.classList.remove("blocked","glitch");
+        status.innerText = "VPN CONNECTÉ 🔵";
+
+        onSound.play();
+
+        navigator.vibrate?.(100);
+    }
+
+});
+
+</script>
+
+</body>
+</html>
